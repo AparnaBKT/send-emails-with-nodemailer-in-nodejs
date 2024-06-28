@@ -5,31 +5,27 @@ require('dotenv').config();
 const app = express();
 const port = 3001;
 
+app.use(express.urlencoded({ extended: true })) 
 app.use(express.json());
-
 // Creating an endpoint for sending normal emails
 app.post('/email',(req, res)=>{
     let config = {
-        service: 'gmail', // your email domain
+        host: 'mail.blackkitetechnologies.com', // your email domain
+        port: 587,
         auth: {
             user: process.env.NODEJS_GMAIL_APP_USER,   // your email address
             pass: process.env.NODEJS_GMAIL_APP_PASSWORD // your password
         }
     }
-    let transporter = nodemailer.createTransport(config);
 
+    
+    let transporter = nodemailer.createTransport(config);
     let message = {
-        from: 'wanuja18@gmail.com', // sender address
+        from: process.env.NODEJS_GMAIL_APP_USER, // sender address
         to: req.body.email, // list of receivers
         subject: 'Welcome to ABC Website!', // Subject line
         html: "<b>Hello world?</b>", // html body
-        attachments: [ // use URL as an attachment
-            {
-              filename: 'receipt_test.pdf',
-              path: 'receipt_test.pdf',
-              cid: 'uniqreceipt_test.pdf' 
-            }
-        ]
+        attachments: []
     };
 
     transporter.sendMail(message).then((info) => {
